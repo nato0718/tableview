@@ -5,15 +5,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var inpHashTag: UITextField! // 入力フィールド
     @IBOutlet weak var tableView: UITableView! // テーブルビュー
     @IBOutlet weak var editSwitchButton: UIButton! // 編集状態
+    @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var keyOffButoon: UIButton!
+    
     
     // データ入力
     @IBAction func addHashTag(_ sender: Any) {
-        arrayHashTag.append("\(inpHashTag.text!)")
+        if inpHashTag.text!.isEmpty {
+            let alert = UIAlertController(title: "Alert", message: "タグを入力してください", preferredStyle: .alert)
+            //ここから追加
+            let ok = UIAlertAction(title: "OK", style: .default) { (action) in
+                self.dismiss(animated: true, completion: nil)
+            }
+            alert.addAction(ok)
+            present(alert, animated: true, completion: nil)
+        } else {
+        arrayHashTag.append( "#" + "\(inpHashTag.text!)")
         tableView.reloadData()
         //arrayHashTagKeyとして配列を書き込む
         userDefaults.set(arrayHashTag, forKey: "arrayHashTagKey")
-        print("追加")
-        print(arrayHashTag)
+        addButton.endEditing(true)
+        }
+        //print("追加")
+        //print(arrayHashTag)
     }
     // 編集ボタン
     @IBAction func tspEdit(_ sender: Any) {
@@ -23,6 +37,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             tableView.reloadData() // テーブルリロード
             editSwitch = false
             editSwitchButton.setTitle("編集終了", for: .normal)
+            editSwitchButton.backgroundColor = UIColor.red
             
         } else {
             tableView.isEditing = false // 編集終了
@@ -30,12 +45,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             tableView.reloadData() // テーブルリロード
             editSwitch = true
             editSwitchButton.setTitle("編集", for: .normal)
+            editSwitchButton.backgroundColor = UIColor.orange
         }
     }
+    
     // 変数・定数
     var userDefaults = UserDefaults.standard // userDefaultsの定義
     //var arrayHashTag = Array(repeating: "#サンプルタグ", count: 1) // 配列データ変数
-    var arrayHashTag:[String?] = ["サンプルタグ1","サンプルタグ2","サンプルタグ3"]
+    var arrayHashTag:[String?] = ["#サンプルタグ1","#サンプルタグ2","#サンプルタグ3"]
     var editSwitch = true // 編集状態（true：編集可 false：編集終了）
     // セルの個数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -58,9 +75,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
      func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,  forRowAt indexPath: IndexPath) {
         arrayHashTag.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+        //print("削除")
+        //print(arrayHashTag)
         //arrayHashTagKeyとして配列を書き込む
-        print("削除")
-        print(arrayHashTag)
         userDefaults.set(arrayHashTag, forKey: "arrayHashTagKey")
      }
     
@@ -76,8 +93,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //移動先の位置にデータを配列に挿入
             arrayHashTag.insert(targetTitle, at: destinationIndexPath.row)
         }
-        print("並び替え")
-        print(arrayHashTag)
+        //print("並び替え")
+        //print(arrayHashTag)
         //テーブルビューをリロードする。
         tableView.reloadData()
         //arrayHashTagKeyとして配列を書き込む
@@ -92,6 +109,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         userDefaults.set(arrayHashTag, forKey: "arrayHashTagKey")
         print(arrayHashTag)
     }
+ 
+    // キーボードを閉じる
+    @IBAction func keyOff(_ sender: Any) {
+        inpHashTag.endEditing(true)
+    }
+    
     // 起動時の処理
     override func viewDidLoad() {
         super.viewDidLoad()
