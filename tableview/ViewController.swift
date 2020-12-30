@@ -21,6 +21,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             present(alert, animated: true, completion: nil)
         } else {
         arrayHashTag.append( "#" + "\(inpHashTag.text!)")
+        print(arrayHashTag)
+        print(inpHashTag.text)
         tableView.reloadData()
         //arrayHashTagKeyとして配列を書き込む
         userDefaults.set(arrayHashTag, forKey: "arrayHashTagKey")
@@ -115,7 +117,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         inpHashTag.endEditing(true)
     }
     
-    // 起動時の処理
+    // クリップボードへコピー
+    @IBAction func clipboardCopy(_ sender: Any) {
+        var arrayHashTagValue:String = ""
+        for value in arrayHashTag { // 配列の全要素を強制アンラップしてテキスト型へ代入
+            arrayHashTagValue = arrayHashTagValue + " " + value!
+        }
+        print(arrayHashTagValue)
+        UIPasteboard.general.string = arrayHashTagValue
+    }
+    
+    @IBAction func clipboardCopyNewline(_ sender: Any) {
+        var arrayHashTagValue:String = ""
+        for value in arrayHashTag { // 配列の全要素を強制アンラップしてテキスト型へ代入
+            arrayHashTagValue = arrayHashTagValue + "\n" + value!
+        }
+        print(arrayHashTagValue)
+        UIPasteboard.general.string = arrayHashTagValue
+    }
+    
+    // 起動時の処理 
     override func viewDidLoad() {
         super.viewDidLoad()
         // userDefaultsに初期値を設定
